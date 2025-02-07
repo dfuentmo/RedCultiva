@@ -1,5 +1,6 @@
 import { AuthOptions } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+import { JWT } from "next-auth/jwt"; // Importar tipo JWT para tipado
 
 if (!process.env.DISCORD_CLIENT_ID || !process.env.DISCORD_CLIENT_SECRET) {
   throw new Error("Las variables de entorno DISCORD_CLIENT_ID o DISCORD_CLIENT_SECRET no están definidas.");
@@ -20,7 +21,10 @@ export const authOptions: AuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      session.accessToken = token.accessToken as string | undefined;
+      // Comprobamos si el token tiene el accessToken y lo asignamos solo si está presente
+      if (typeof token.accessToken === "string") {
+        session.accessToken = token.accessToken;
+      }
       return session;
     },
   },
