@@ -27,17 +27,16 @@ export async function GET() {
 
     const data = rows.map((row) => {
       const rowData = row.toObject(); // Usamos `toObject` para obtener los valores como un objeto
-
       return {
-        usuario: rowData['Usuario'] || 'No disponible',  // Asegúrate de que 'Usuario' coincida con el nombre de la columna
-        tipo: rowData['Tipo'] || 'No disponible',
-        nombre: rowData['Nombre'] || 'No disponible',
-        variedad: rowData['Variedad'] || 'No disponible',
-        nombreCientifico: rowData['Nombre Científico'] || 'No disponible',
-        agnoRecoleccion: rowData['Año Recolección'] || 'No disponible',
-        lugarRecoleccion: rowData['Lugar Recolección'] || 'No disponible',
-        observaciones: rowData['Observaciones'] || 'No disponible',
-        imagenes: rowData['Imagenes'] || 'No disponible',
+        usuario: rowData['usuario'] || 'No disponible',  // Asegúrate de que 'Usuario' coincida con el nombre de la columna
+        tipo: rowData['tipo'] || 'No disponible',
+        nombre: rowData['nombre'] || 'No disponible',
+        variedad: rowData['variedad'] || 'Variedad no documentada',
+        nombreCientifico: rowData['nombreCientifico'] || 'No disponible',
+        agnoRecoleccion: rowData['agnoRecoleccion'] || 'No disponible',
+        lugarRecoleccion: rowData['lugarRecoleccion'] || 'No disponible',
+        observaciones: rowData['observaciones'] || 'Sin información adicional',
+        imagenes: rowData['imagenes'] || 'No disponible',
       };
     });
 
