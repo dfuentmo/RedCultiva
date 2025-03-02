@@ -1,20 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"; // Asegúrate de que la ruta sea correcta
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2 } from "lucide-react";
-
-// Tipo para las semillas
-type Seed = {
-  id?: string; // Añadimos id para manejar edición y eliminación
-  usuario: string;
-  tipo: string;
-  nombre: string;
-  variedad: string;
-  nombreCientifico: string;
-  agnoRecoleccion: string;
-  lugarRecoleccion: string;
-  observaciones: string;
-  imagenes: string;
-};
+import { Seed } from "@/app/dashboard/page";
 
 type SeedListProps = {
   seeds: Seed[];

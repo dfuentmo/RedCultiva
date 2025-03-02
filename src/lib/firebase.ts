@@ -1,6 +1,7 @@
 // lib/firebase.ts
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 // Configuración de Firebase usando las variables de entorno
 const firebaseConfig = {
@@ -18,4 +19,7 @@ const app = initializeApp(firebaseConfig);
 // Obtener Firestore
 const db = getFirestore(app);
 
-export { db };
+// Obtener Storage
+const storage = getStorage(app);
+
+export { db, storage, app };
