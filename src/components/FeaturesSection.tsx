@@ -2,88 +2,51 @@ import { FeatureCard } from "./FeatureCard";
 
 export function FeaturesSection() {
   return (
-    <section className="py-16">
+    <section className="py-20 bg-gradient-to-b from-olive-50 to-olive-100">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center text-olive-800 mb-12">¿Cómo funciona?</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <h2 className="text-4xl font-bold text-center text-olive-900 mb-16 relative">
+          <span className="relative z-10">El Viaje de las Semillas</span>
+          <span className="absolute w-24 h-1 bg-olive-500 bottom-0 left-1/2 transform -translate-x-1/2 -mb-4"></span>
+        </h2>
+        <p className="text-xl text-olive-700 text-center max-w-3xl mx-auto mb-16">
+          Descubre cómo RedCultiva está tejiendo una red global de guardianes de semillas, preservando la sabiduría ancestral y cultivando un futuro más resiliente.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
           <FeatureCard
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="48"
-                height="48"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-            }
-            title="Conecta"
-            description="Únete a nuestra comunidad de entusiastas de las semillas utilizando tu cuenta de Discord."
-            titleColor="text-olive-800"
-            descriptionColor="text-green-600"
-            backgroundColor="bg-olive-200 bg-opacity-50"
-            iconColor="text-green-600"
+            icon="🌱"
+            title="Preservación Consciente"
+            description="Cada semilla que guardas es un tesoro genético que conecta nuestro pasado con las generaciones futuras. Sé parte de este legado vivo."
+            titleColor="text-olive-900"
+            descriptionColor="text-olive-700"
+            backgroundColor="bg-olive-100/60"
+            iconColor="text-olive-700"
           />
           <FeatureCard
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="48"
-                height="48"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M7 20.5c-2.5 0-2.5-16 0-16" />
-                <path d="M7 12h18" />
-                <path d="M7 5h10" />
-                <path d="M7 28h10" />
-              </svg>
-            }
-            title="Comparte"
-            description="Añade tus semillas para intercambiar o encuentra semillas que quieras cultivar."
-            titleColor="text-olive-800"
-            descriptionColor="text-green-600"
-            backgroundColor="bg-olive-200 bg-opacity-50"
-            iconColor="text-green-600"
+            icon="🔄"
+            title="Intercambio Regenerativo"
+            description="Transforma la manera en que compartimos recursos. Cada intercambio fortalece nuestra comunidad y amplía la diversidad de nuestros cultivos."
+            titleColor="text-olive-900"
+            descriptionColor="text-olive-700"
+            backgroundColor="bg-olive-100/60"
+            iconColor="text-olive-700"
           />
           <FeatureCard
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="48"
-                height="48"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M6.8 22 12 13.9 17.2 22" />
-                <path d="m5 8.3 7-4.8 7 4.8" />
-                <path d="M12 3v6" />
-                <path d="m5 8.3-3 .3 2 5.3L12 22V13.9L5 8.3Z" />
-                <path d="m19 8.3 3 .3-2 5.3L12 22V13.9l7-5.6Z" />
-              </svg>
-            }
-            title="Cultiva"
-            description="Cultiva tu jardín o huerto y contribuye a la biodiversidad."
-            titleColor="text-olive-800"
-            descriptionColor="text-green-600"
-            backgroundColor="bg-olive-200 bg-opacity-50"
-            iconColor="text-green-600"
+            icon="🌍"
+            title="Impacto Global, Raíces Locales"
+            description="Actúa localmente mientras participas en un movimiento global. Tu jardín es parte de una red que está cambiando el mundo, una semilla a la vez."
+            titleColor="text-olive-900"
+            descriptionColor="text-olive-700"
+            backgroundColor="bg-olive-100/60"
+            iconColor="text-olive-700"
+          />
+          <FeatureCard
+            icon="🧠"
+            title="Sabiduría Colectiva"
+            description="Comparte conocimientos ancestrales y técnicas innovadoras. Juntos, estamos creando un repositorio vivo de sabiduría agrícola."
+            titleColor="text-olive-900"
+            descriptionColor="text-olive-700"
+            backgroundColor="bg-olive-100/60"
+            iconColor="text-olive-700"
           />
         </div>
       </div>

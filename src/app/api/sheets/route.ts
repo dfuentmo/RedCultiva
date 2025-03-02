@@ -28,6 +28,7 @@ export async function GET() {
     const data = rows.map((row) => {
       const rowData = row.toObject(); // Usamos `toObject` para obtener los valores como un objeto
       return {
+        id: rowData['id'],
         usuario: rowData['usuario'] || 'No disponible',  // Asegúrate de que 'Usuario' coincida con el nombre de la columna
         tipo: rowData['tipo'] || 'No disponible',
         nombre: rowData['nombre'] || 'No disponible',
