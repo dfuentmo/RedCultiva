@@ -1,7 +1,44 @@
 "use client";
-import { Sprout, Leaf, Users, Shield, BookOpen, Scale } from "lucide-react";
+import { Sprout, Leaf, Users, Shield, BookOpen, Scale, MessageSquare, ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
 
 export default function ComoFunciona() {
+  // Estado para controlar qué preguntas están abiertas
+  const [openQuestions, setOpenQuestions] = useState<number[]>([]);
+
+  // Función para manejar el clic en una pregunta
+  const toggleQuestion = (index: number) => {
+    if (openQuestions.includes(index)) {
+      setOpenQuestions(openQuestions.filter(i => i !== index));
+    } else {
+      setOpenQuestions([...openQuestions, index]);
+    }
+  };
+
+  // Array de preguntas y respuestas
+  const faqs = [
+    {
+      question: "¿Cómo puedo convertirme en guardián de semillas?",
+      answer: "Para convertirte en guardián, simplemente inicia sesión con tu cuenta de Discord y comienza a añadir tus semillas al catálogo. No hay requisitos mínimos, pero valoramos la calidad y precisión de la información."
+    },
+    {
+      question: "¿Qué información debo proporcionar sobre mis semillas?",
+      answer: "Es importante incluir el nombre de la variedad, año de recolección, lugar de origen, y cualquier observación relevante sobre su cultivo o características especiales."
+    },
+    {
+      question: "¿Cómo se gestionan los gastos de envío?",
+      answer: "Los gastos de envío son acordados entre las partes. Recomendamos utilizar sobres acolchados pequeños para minimizar costes y proteger las semillas durante el transporte."
+    },
+    {
+      question: "¿Qué ocurre si tengo un problema con un intercambio?",
+      answer: "Si tienes algún problema, puedes contactar con nuestro equipo a través del formulario de contacto o mediante nuestro bot de Discord. Intentaremos mediar para encontrar una solución satisfactoria para ambas partes."
+    },
+    {
+      question: "¿Necesito tener Discord para usar RedCultiva?",
+      answer: "Sí, utilizamos Discord como sistema de autenticación y como plataforma complementaria. Necesitarás una cuenta de Discord para acceder a todas las funcionalidades de RedCultiva."
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-olive-100 py-16">
       <div className="container mx-auto px-4">
@@ -79,6 +116,60 @@ export default function ComoFunciona() {
           </div>
         </div>
 
+        {/* Integración con Discord */}
+        <div className="max-w-5xl mx-auto mb-16 bg-olive-100 bg-opacity-60 backdrop-blur-sm p-8 rounded-2xl shadow-lg border border-olive-200/30">
+          <h2 className="text-3xl font-bold text-center text-olive-900 mb-10 relative">
+            <span className="relative z-10">Integración con Discord</span>
+            <span className="absolute w-16 h-1 bg-olive-500 bottom-0 left-1/2 transform -translate-x-1/2 -mb-3"></span>
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div>
+              <div className="flex items-center mb-4">
+                <div className="bg-olive-200 p-3 rounded-full mr-4">
+                  <Users className="h-6 w-6 text-olive-800" />
+                </div>
+                <h3 className="text-xl font-semibold text-olive-900">Login con Discord</h3>
+              </div>
+              <div className="bg-olive-50 bg-opacity-70 rounded-xl p-5 shadow-sm border border-olive-200/30 mb-4">
+                <p className="text-olive-800 mb-3">
+                  RedCultiva utiliza Discord como sistema de autenticación, lo que te permite acceder a la plataforma de forma segura y sencilla:
+                </p>
+                <ul className="list-disc pl-6 space-y-2 text-olive-800">
+                  <li>No necesitas crear una cuenta adicional</li>
+                  <li>Proceso de login rápido y seguro mediante OAuth2</li>
+                  <li>Solo accedemos a información básica como tu nombre de usuario y avatar</li>
+                  <li>No tenemos acceso a tus mensajes privados ni a otros datos personales</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div>
+              <div className="flex items-center mb-4">
+                <div className="bg-olive-200 p-3 rounded-full mr-4">
+                  <MessageSquare className="h-6 w-6 text-olive-800" />
+                </div>
+                <h3 className="text-xl font-semibold text-olive-900">Bot de Discord</h3>
+              </div>
+              <div className="bg-olive-50 bg-opacity-70 rounded-xl p-5 shadow-sm border border-olive-200/30 mb-4">
+                <p className="text-olive-800 mb-3">
+                  Complementamos nuestra plataforma web con un bot de Discord que te permite:
+                </p>
+                <ul className="list-disc pl-6 space-y-2 text-olive-800">
+                  <li>Consultar el catálogo de semillas directamente desde Discord</li>
+                  <li>Recibir notificaciones sobre solicitudes de intercambio</li>
+                  <li>Conectar con otros guardianes de semillas</li>
+                  <li>Acceder a la misma información que está disponible en la web</li>
+                  <li>Participar en una comunidad activa de intercambio de conocimientos</li>
+                </ul>
+                <p className="text-olive-800 mt-3">
+                  El bot está diseñado para sincronizarse con la plataforma web, ofreciendo una experiencia integrada y coherente.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Principios */}
         <div className="max-w-5xl mx-auto mb-16">
           <h2 className="text-3xl font-bold text-center text-olive-900 mb-10 relative">
@@ -116,23 +207,36 @@ export default function ComoFunciona() {
             <span className="relative z-10">Preguntas Frecuentes</span>
             <span className="absolute w-16 h-1 bg-olive-500 bottom-0 left-1/2 transform -translate-x-1/2 -mb-3"></span>
           </h2>
-          <div className="space-y-6">
-            <div className="bg-olive-100 bg-opacity-60 backdrop-blur-sm p-6 rounded-xl shadow-md border border-olive-200/30">
-              <h3 className="text-xl font-semibold text-olive-900 mb-2">¿Cómo puedo convertirme en guardián de semillas?</h3>
-              <p className="text-olive-800">Para convertirte en guardián, simplemente regístrate en la plataforma y comienza a añadir tus semillas al catálogo. No hay requisitos mínimos, pero valoramos la calidad y precisión de la información.</p>
-            </div>
-            <div className="bg-olive-100 bg-opacity-60 backdrop-blur-sm p-6 rounded-xl shadow-md border border-olive-200/30">
-              <h3 className="text-xl font-semibold text-olive-900 mb-2">¿Qué información debo proporcionar sobre mis semillas?</h3>
-              <p className="text-olive-800">Es importante incluir el nombre de la variedad, año de recolección, lugar de origen, y cualquier observación relevante sobre su cultivo o características especiales.</p>
-            </div>
-            <div className="bg-olive-100 bg-opacity-60 backdrop-blur-sm p-6 rounded-xl shadow-md border border-olive-200/30">
-              <h3 className="text-xl font-semibold text-olive-900 mb-2">¿Cómo se gestionan los gastos de envío?</h3>
-              <p className="text-olive-800">Los gastos de envío son acordados entre las partes. Recomendamos utilizar sobres acolchados pequeños para minimizar costes y proteger las semillas durante el transporte.</p>
-            </div>
-            <div className="bg-olive-100 bg-opacity-60 backdrop-blur-sm p-6 rounded-xl shadow-md border border-olive-200/30">
-              <h3 className="text-xl font-semibold text-olive-900 mb-2">¿Qué ocurre si tengo un problema con un intercambio?</h3>
-              <p className="text-olive-800">Si tienes algún problema, puedes contactar con nuestro equipo a través del formulario de contacto. Intentaremos mediar para encontrar una solución satisfactoria para ambas partes.</p>
-            </div>
+          <div className="space-y-4">
+            {faqs.map((faq, index) => (
+              <div 
+                key={index} 
+                className="bg-olive-100 bg-opacity-60 backdrop-blur-sm rounded-xl shadow-md border border-olive-200/30 overflow-hidden"
+              >
+                <button 
+                  onClick={() => toggleQuestion(index)}
+                  className="w-full text-left p-6 flex justify-between items-center focus:outline-none"
+                >
+                  <h3 className="text-xl font-semibold text-olive-900">{faq.question}</h3>
+                  <span className="text-olive-700 flex-shrink-0 ml-4">
+                    {openQuestions.includes(index) ? (
+                      <ChevronUp className="h-5 w-5" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5" />
+                    )}
+                  </span>
+                </button>
+                <div 
+                  className={`px-6 pb-6 text-olive-800 transition-all duration-300 ease-in-out ${
+                    openQuestions.includes(index) 
+                      ? "max-h-96 opacity-100" 
+                      : "max-h-0 opacity-0 overflow-hidden"
+                  }`}
+                >
+                  <p>{faq.answer}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
