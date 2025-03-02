@@ -34,6 +34,12 @@ export function Menu() {
           >
             Catálogo de Semillas
           </Link>
+          <Link 
+            href="/como-funciona" 
+            className="text-olive-900 hover:text-olive-600 font-medium transition-colors"
+          >
+            Cómo Funciona
+          </Link>
           {!session ? (
             <LoginButton />
           ) : (
