@@ -1,17 +1,20 @@
 import React from 'react';
 
+type Seed = {
+  id: string;
+  usuario?: string;
+  nombre: string;
+  variedad: string;
+  tipo: string;
+  nombreCientifico: string;
+  agnoRecoleccion: string;
+  lugarRecoleccion: string;
+  observaciones: string;
+  imagenes: string;
+};
+
 interface SemillaCardProps {
-  semilla: {
-    usuario: string;
-    tipo: string;
-    nombre: string;
-    variedad: string;
-    nombreCientifico: string;
-    agnoRecoleccion: string;
-    lugarRecoleccion: string;
-    observaciones: string;
-    imagenes: string;
-  };
+  semilla: Seed;
 }
 
 const SemillaCard: React.FC<SemillaCardProps> = ({ semilla }) => {
@@ -43,7 +46,7 @@ const SemillaCard: React.FC<SemillaCardProps> = ({ semilla }) => {
         {/* Footer */}
         <div className="p-4 bg-dark_moss_green-600">
           <p className="text-xs text-olive-300 italic">
-            <strong>Subido por:</strong> {semilla.usuario}
+            <strong>Subido por:</strong> {semilla.usuario || 'Sin información'}
           </p>
         </div>
       </div>

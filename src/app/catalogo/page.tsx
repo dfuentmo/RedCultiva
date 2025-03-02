@@ -5,18 +5,51 @@ import { collection, getDocs } from "firebase/firestore";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Grid, List, Search, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Grid, List, Search, ChevronLeft, ChevronRight, X, Calendar, MapPin, Leaf, User, Info, Sprout } from "lucide-react";
+import { SeedImage } from "@/components/SeedImage";
+import { SeedImageUploader } from "@/components/SeedImageUploader";
 
 // Definir la interfaz para los datos de semillas
-interface Seed {
-  id: string;
+type Seed = {
+  id?: string;
+  usuario?: string;
+  tipo: string;
   nombre: string;
   variedad: string;
-  año: string;
+  nombreCientifico: string;
+  agnoRecoleccion: string;
   lugarRecoleccion: string;
-  usuario: string;
-  fechaRegistro: string;
-}
+  observaciones: string;
+  imageUrl?: string;
+};
+
+// Función para determinar el color de categoría basado en la variedad
+const getCategoryColor = (variedad: string): string => {
+  const hash = variedad.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const colors = [
+    'bg-olive-100 text-olive-800 border-olive-200',
+    'bg-olive-200 text-olive-900 border-olive-300',
+    'bg-olive-50 text-olive-700 border-olive-200',
+    'bg-amber-50 text-amber-700 border-amber-100',
+    'bg-emerald-50 text-emerald-700 border-emerald-100',
+    'bg-green-50 text-green-700 border-green-100',
+  ];
+  return colors[hash % colors.length];
+};
+
+// Función para obtener un icono decorativo basado en el nombre de la semilla
+const getSeedIconColor = (seedName: string): string => {
+  const hash = seedName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const colors = [
+    'text-olive-600',
+    'text-olive-700',
+    'text-olive-500',
+    'text-amber-600',
+    'text-emerald-600',
+    'text-green-600',
+  ];
+  return colors[hash % colors.length];
+};
 
 export default function CatalogoPage() {
   const [seeds, setSeeds] = useState<Seed[]>([]);
@@ -214,35 +247,82 @@ export default function CatalogoPage() {
             </div>
           ) : (
             <>
-              <div className={`max-w-5xl mx-auto ${viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}`}>
+              <div className={`max-w-5xl mx-auto ${viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-6"}`}>
                 {currentItems.map((seed) => (
                   <div 
                     key={seed.id} 
-                    className={`bg-olive-100 bg-opacity-60 backdrop-blur-sm rounded-xl shadow-md border border-olive-200/30 overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer ${
-                      viewMode === "grid" ? "" : "flex items-center p-4"
+                    className={`bg-olive-50/80 backdrop-blur-sm rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-olive-300 cursor-pointer border border-olive-100 ${
+                      viewMode === "grid" ? "" : "flex items-center"
                     }`}
                     onClick={() => openSeedDetails(seed)}
                   >
                     {viewMode === "grid" ? (
                       <>
+                        <div className="relative">
+                          <SeedImage 
+                            imageUrl={seed.imageUrl}
+                            alt={seed.nombre}
+                            iconColor={getSeedIconColor(seed.nombre)}
+                            className="h-32"
+                          />
+                          <div className={`absolute top-3 right-3 ${getCategoryColor(seed.variedad)} px-2 py-1 rounded-full text-xs font-medium border`}>
+                            {seed.variedad || "Variedad"}
+                          </div>
+                        </div>
                         <div className="p-6">
-                          <h3 className="text-xl font-semibold text-olive-900 mb-2">{seed.nombre}</h3>
-                          <p className="text-olive-700 mb-4">Variedad: {seed.variedad || "No especificada"}</p>
-                          <div className="flex justify-between text-sm text-olive-600">
-                            <span>Año: {seed.año || "Desconocido"}</span>
-                            <span>Origen: {seed.lugarRecoleccion || "No especificado"}</span>
+                          <h3 className="text-xl font-bold text-olive-900 mb-3">{seed.nombre}</h3>
+                          
+                          <div className="space-y-2 mb-4">
+                            <div className="flex items-center text-sm text-olive-700">
+                              <Calendar className="h-4 w-4 mr-2 text-olive-500" />
+                              <span>Año: {seed.agnoRecoleccion || "Desconocido"}</span>
+                            </div>
+                            <div className="flex items-center text-sm text-olive-700">
+                              <MapPin className="h-4 w-4 mr-2 text-olive-500" />
+                              <span>{seed.lugarRecoleccion || "Origen desconocido"}</span>
+                            </div>
+                          </div>
+                          
+                          <div className="pt-4 border-t border-olive-200 flex justify-between items-center">
+                            <div className="flex items-center text-sm text-olive-600">
+                              <User className="h-4 w-4 mr-1" />
+                              <span>{seed.usuario || "Anónimo"}</span>
+                            </div>
+                            <span className="text-olive-500 flex items-center text-sm font-medium hover:text-olive-700">
+                              <Info className="h-4 w-4 mr-1" />
+                              Detalles
+                            </span>
                           </div>
                         </div>
                       </>
                     ) : (
                       <>
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-olive-900">{seed.nombre}</h3>
-                          <p className="text-olive-700 text-sm">Variedad: {seed.variedad || "No especificada"}</p>
+                        <SeedImage 
+                          imageUrl={seed.imageUrl}
+                          alt={seed.nombre}
+                          iconColor={getSeedIconColor(seed.nombre)}
+                          className="w-16 h-16 flex-shrink-0"
+                        />
+                        <div className="flex-1 p-4">
+                          <div className="flex justify-between items-start">
+                            <h3 className="text-lg font-bold text-olive-900">{seed.nombre}</h3>
+                            <div className={`${getCategoryColor(seed.variedad)} px-2 py-1 rounded-full text-xs font-medium border`}>
+                              {seed.variedad || "Variedad"}
+                            </div>
+                          </div>
+                          <div className="mt-2 flex items-center text-sm text-olive-700">
+                            <MapPin className="h-4 w-4 mr-1 text-olive-500" />
+                            <span>{seed.lugarRecoleccion || "Origen desconocido"}</span>
+                            <span className="mx-2">•</span>
+                            <Calendar className="h-4 w-4 mr-1 text-olive-500" />
+                            <span>Año: {seed.agnoRecoleccion || "Desconocido"}</span>
+                          </div>
                         </div>
-                        <div className="text-right text-sm text-olive-600">
-                          <p>Año: {seed.año || "Desconocido"}</p>
-                          <p>Origen: {seed.lugarRecoleccion || "No especificado"}</p>
+                        <div className="pr-4">
+                          <span className="text-olive-500 flex items-center text-sm font-medium hover:text-olive-700">
+                            <Info className="h-4 w-4 mr-1" />
+                            Detalles
+                          </span>
                         </div>
                       </>
                     )}
@@ -294,49 +374,98 @@ export default function CatalogoPage() {
         
         {/* Modal de detalles de semilla */}
         {showModal && selectedSeed && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="relative p-6">
+          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-olive-50 rounded-2xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-olive-200">
+              <div className="relative">
+                <SeedImage 
+                  imageUrl={selectedSeed.imageUrl}
+                  alt={selectedSeed.nombre}
+                  iconColor={getSeedIconColor(selectedSeed.nombre)}
+                  className="h-40"
+                />
+                <div className={`absolute top-4 right-4 ${getCategoryColor(selectedSeed.variedad)} px-3 py-1 rounded-full text-sm font-medium border shadow-md`}>
+                  {selectedSeed.variedad || "Variedad"}
+                </div>
                 <button 
                   onClick={closeModal}
-                  className="absolute top-4 right-4 text-olive-600 hover:text-olive-900"
+                  className="absolute top-4 left-4 bg-white/80 backdrop-blur-sm p-2 rounded-full text-olive-600 hover:text-olive-900 shadow-md"
                 >
-                  <X size={24} />
+                  <X size={20} />
                 </button>
-                
-                <h2 className="text-2xl font-bold text-olive-900 mb-6 pr-8">{selectedSeed.nombre}</h2>
+              </div>
+              
+              <div className="p-6">
+                <h2 className="text-2xl font-bold text-olive-900 mb-6">{selectedSeed.nombre}</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div>
-                    <h3 className="text-sm font-medium text-olive-600 mb-1">Variedad</h3>
-                    <p className="text-olive-900">{selectedSeed.variedad || "No especificada"}</p>
+                  <div className="bg-white p-4 rounded-lg border border-olive-200">
+                    <div className="flex items-center mb-2">
+                      <Leaf className="h-5 w-5 mr-2 text-olive-600" />
+                      <h3 className="text-sm font-medium text-olive-700">Variedad</h3>
+                    </div>
+                    <p className="text-olive-900 font-medium">{selectedSeed.variedad || "No especificada"}</p>
                   </div>
                   
-                  <div>
-                    <h3 className="text-sm font-medium text-olive-600 mb-1">Año</h3>
-                    <p className="text-olive-900">{selectedSeed.año || "Desconocido"}</p>
+                  <div className="bg-white p-4 rounded-lg border border-olive-200">
+                    <div className="flex items-center mb-2">
+                      <Calendar className="h-5 w-5 mr-2 text-olive-600" />
+                      <h3 className="text-sm font-medium text-olive-700">Año</h3>
+                    </div>
+                    <p className="text-olive-900 font-medium">{selectedSeed.agnoRecoleccion || "Desconocido"}</p>
                   </div>
                   
-                  <div>
-                    <h3 className="text-sm font-medium text-olive-600 mb-1">Lugar de recolección</h3>
-                    <p className="text-olive-900">{selectedSeed.lugarRecoleccion || "No especificado"}</p>
+                  <div className="bg-white p-4 rounded-lg border border-olive-200">
+                    <div className="flex items-center mb-2">
+                      <MapPin className="h-5 w-5 mr-2 text-olive-600" />
+                      <h3 className="text-sm font-medium text-olive-700">Lugar de recolección</h3>
+                    </div>
+                    <p className="text-olive-900 font-medium">{selectedSeed.lugarRecoleccion || "No especificado"}</p>
                   </div>
                   
-                  <div>
-                    <h3 className="text-sm font-medium text-olive-600 mb-1">Fecha de registro</h3>
-                    <p className="text-olive-900">{selectedSeed.fechaRegistro || "No disponible"}</p>
+                  <div className="bg-white p-4 rounded-lg border border-olive-200">
+                    <div className="flex items-center mb-2">
+                      <Calendar className="h-5 w-5 mr-2 text-olive-600" />
+                      <h3 className="text-sm font-medium text-olive-700">Fecha de registro</h3>
+                    </div>
+                    <p className="text-olive-900 font-medium">{selectedSeed.observaciones || "No disponible"}</p>
                   </div>
                 </div>
                 
-                <div className="bg-olive-50 p-4 rounded-lg mb-6">
-                  <h3 className="text-sm font-medium text-olive-600 mb-2">Guardián de la semilla</h3>
-                  <p className="text-olive-900">{selectedSeed.usuario || "Anónimo"}</p>
+                <div className="bg-olive-100/70 p-5 rounded-lg mb-6 border border-olive-200">
+                  <div className="flex items-center mb-2">
+                    <User className="h-5 w-5 mr-2 text-olive-600" />
+                    <h3 className="text-sm font-medium text-olive-700">Guardián de la semilla</h3>
+                  </div>
+                  <p className="text-olive-900 font-medium">{selectedSeed.usuario || "Anónimo"}</p>
                 </div>
                 
-                <div className="text-center">
+                {/* Componente para subir imágenes */}
+                <SeedImageUploader 
+                  seedId={selectedSeed.id} 
+                  onImageUploaded={(imageUrl) => {
+                    // Actualizar la imagen en el estado local
+                    setSelectedSeed({...selectedSeed, imageUrl});
+                    
+                    // Actualizar la imagen en la lista de semillas
+                    setSeeds(prevSeeds => 
+                      prevSeeds.map(s => 
+                        s.id === selectedSeed.id ? {...s, imageUrl} : s
+                      )
+                    );
+                    
+                    // Actualizar también las semillas filtradas
+                    setFilteredSeeds(prevSeeds => 
+                      prevSeeds.map(s => 
+                        s.id === selectedSeed.id ? {...s, imageUrl} : s
+                      )
+                    );
+                  }}
+                />
+                
+                <div className="text-center mt-6">
                   <button 
                     onClick={closeModal}
-                    className="px-6 py-2 bg-olive-700 text-olive-100 rounded-lg hover:bg-olive-800 transition-colors"
+                    className="px-6 py-3 bg-olive-700 text-olive-100 rounded-lg hover:bg-olive-800 transition-colors shadow-md hover:shadow-lg"
                   >
                     Cerrar
                   </button>

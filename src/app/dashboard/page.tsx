@@ -9,11 +9,12 @@ import { SeedList } from "@/components/seed-list";
 import { CreateEditSeedModal } from "@/components/create-edit-seed-modal";
 import { SearchBar } from "@/components/search-bar";
 import { db } from "@/lib/firebase"; // Conexión a Firebase Firestore
-import { collection, addDoc, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, query, where, updateDoc } from "firebase/firestore";
+
 // Tipo para las semillas
-type Seed = {
+export type Seed = {
   id?: string; // Añadimos id para manejar edición y eliminación
-  usuario: string;
+  usuario?: string;
   tipo: string;
   nombre: string;
   variedad: string;
@@ -21,11 +22,8 @@ type Seed = {
   agnoRecoleccion: string;
   lugarRecoleccion: string;
   observaciones: string;
-  imagenes: string;
+  imageUrl?: string; // URL de la imagen almacenada en Firebase Storage
 };
-
-// Tipo para las semillas que se pasan al componente CreateEditSeedModal
-type SeedForModal = Omit<Seed, 'usuario'>;
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -41,59 +39,67 @@ export default function Dashboard() {
   const username = session?.user?.name;
 
   // Obtener las semillas desde Firestore
+  const fetchSeeds = async () => {
+    if (!username) return;
+    setLoading(true);
+    try {
+      const q = query(collection(db, "seeds"), where("usuario", "==", username));
+      const querySnapshot = await getDocs(q);
+      
+      const userSeeds: Seed[] = [];
+      querySnapshot.forEach((doc) => {
+        userSeeds.push({ ...doc.data(), id: doc.id } as Seed);
+      });
+      
+      setSeeds(userSeeds);
+    } catch (error) {
+      console.error("Error al obtener las semillas desde Firestore", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Obtener las semillas al cargar el componente
   useEffect(() => {
-    const fetchSeeds = async () => {
-      if (!username) return;
-      setLoading(true);
-      try {
-        const q = query(collection(db, "seeds"), where("usuario", "==", username));
-        const querySnapshot = await getDocs(q);
-        
-        const userSeeds: Seed[] = [];
-        querySnapshot.forEach((doc) => {
-          userSeeds.push({ ...doc.data(), id: doc.id } as Seed);
-        });
-        
-        setSeeds(userSeeds);
-      } catch (error) {
-        console.error("Error al obtener las semillas desde Firestore", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchSeeds();
   }, [username]);
 
   // Guardar semilla en Firestore
-  const handleSaveSeed = async (seed: SeedForModal) => {
+  const handleSaveSeed = (seed: Seed) => {
     try {
       if (!session?.user?.name) {
         console.error("Usuario no autenticado");
         return;
       }
 
-      const userName = session.user.name;
+      // Si la semilla ya tiene un ID, significa que estamos editando
+      if (seed.id) {
+        const seedRef = doc(db, "seeds", seed.id);
+        updateDoc(seedRef, {
+          tipo: seed.tipo || "",
+          nombre: seed.nombre || "",
+          variedad: seed.variedad || "",
+          nombreCientifico: seed.nombreCientifico || "",
+          agnoRecoleccion: seed.agnoRecoleccion || "",
+          lugarRecoleccion: seed.lugarRecoleccion || "",
+          observaciones: seed.observaciones || "",
+          imageUrl: seed.imageUrl || "",
+        });
 
-      const docRef = await addDoc(collection(db, "seeds"), {
-        usuario: userName,
-        tipo: seed.tipo || "",
-        nombre: seed.nombre || "",
-        variedad: seed.variedad || "",
-        nombreCientifico: seed.nombreCientifico || "",
-        agnoRecoleccion: seed.agnoRecoleccion || "",
-        lugarRecoleccion: seed.lugarRecoleccion || "",
-        observaciones: seed.observaciones || "",
-        imagenes: seed.imagenes || "",
-      });
+        // Actualizar el estado local
+        setSeeds(prev => 
+          prev.map(s => s.id === seed.id ? { ...seed } : s)
+        );
+      } else {
+        // Si no tiene ID, es una nueva semilla (este caso ahora se maneja en el modal)
+        // Actualizamos el estado local con la nueva semilla
+        setSeeds(prev => [...prev, seed]);
+      }
 
-      console.log("Documento escrito con ID: ", docRef.id);
-
-      setSeeds((prev) => [
-        ...prev,
-        { ...seed, id: docRef.id, usuario: userName },
-      ]);
+      // Refrescar las semillas para asegurarnos de tener los datos más actualizados
+      fetchSeeds();
     } catch (error) {
-      console.error("Error al crear la semilla en Firestore", error);
+      console.error("Error al guardar la semilla en Firestore", error);
     } finally {
       setIsModalOpen(false);
       setEditingSeed(null);
@@ -117,7 +123,7 @@ export default function Dashboard() {
     const years = new Set(seeds.map((seed) => seed.agnoRecoleccion));
     // Convertir los años a números para que coincidan con el tipo esperado
     return Array.from(years)
-      .filter(year => !isNaN(Number(year))) // Filtrar años no numéricos
+      .filter(year => !isNaN(Number(year)) && year !== "") // Filtrar años no numéricos y vacíos
       .map(year => Number(year)) // Convertir a número
       .sort((a, b) => b - a); // Ordenar de mayor a menor
   }, [seeds]);
@@ -129,15 +135,15 @@ export default function Dashboard() {
         const matchesSearch =
           (seed.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
           (seed.variedad?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
-          (seed.usuario?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false);
+          (seed.nombreCientifico?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false);
         const matchesYear = selectedYear === "0" || seed.agnoRecoleccion === selectedYear;
         return matchesSearch && matchesYear;
       })
       .sort((a, b) => {
         if (sortBy === "nombre") {
-          return a.nombre.localeCompare(b.nombre);
+          return (a.nombre || "").localeCompare(b.nombre || "");
         } else if (sortBy === "agnoRecoleccion") {
-          return b.agnoRecoleccion.localeCompare(a.agnoRecoleccion);
+          return (b.agnoRecoleccion || "").localeCompare(a.agnoRecoleccion || "");
         }
         return 0;
       });
@@ -152,8 +158,6 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto p-6">
         <div className="mb-8 flex justify-between items-center">
           <h1 className="text-3xl font-bold text-olive-900">Dashboard de Semillas</h1>
-          <div className="p-6">
-    </div>
           <Button onClick={() => setIsModalOpen(true)} className="bg-olive-800 hover:bg-olive-900 text-olive-100">
             <Plus className="mr-2 h-4 w-4" /> Crear nueva semilla
           </Button>

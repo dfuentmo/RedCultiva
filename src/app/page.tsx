@@ -6,10 +6,21 @@ import { db } from "@/lib/firebase"; // Importa la configuración de Firebase
 import { collection, getDocs } from "firebase/firestore";
 import { SproutIcon, UsersIcon, GlobeIcon } from "lucide-react";
 
-// Token de acceso público de Mapbox (reemplazar con tu token)
-const MAPBOX_TOKEN = 'pk.eyJ1IjoicmVkY3VsdGl2YSIsImEiOiJjbHRxcnRtZGQwMGJqMmpxcXg2ZWNqNWNsIn0.Qs-QMYXxGrLnlnFPYZlvMQ';
-
 // Tipo para los datos de semillas
+type Seed = {
+  id?: string;
+  usuario?: string;
+  tipo: string;
+  nombre: string;
+  variedad: string;
+  nombreCientifico: string;
+  agnoRecoleccion: string;
+  lugarRecoleccion: string;
+  observaciones: string;
+  imageUrl?: string;
+};
+
+// Tipo para las ubicaciones de semillas en el mapa
 type SeedLocation = {
   id: string;
   nombre: string;
@@ -17,7 +28,7 @@ type SeedLocation = {
   lugarRecoleccion: string;
   latitude: number;
   longitude: number;
-  usuario: string;
+  usuario?: string;
 };
 
 export default function Home() {
