@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { db } from "@/lib/firebase"
+import { collection, addDoc } from "firebase/firestore"
 
 type Seed = {
   tipo: string
@@ -57,7 +59,7 @@ export function CreateEditSeedModal({ isOpen, onClose, onSave, seedToEdit }: Cre
     }
   }, [seedToEdit])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setSeed((prev) => ({ ...prev, [name]: value }));
   };
@@ -66,18 +68,15 @@ export function CreateEditSeedModal({ isOpen, onClose, onSave, seedToEdit }: Cre
     e.preventDefault()
 
     try {
-      const response = await fetch("/api/sheets/crud/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...seed, usuario: usuarioDiscord }), // Se añade el usuario automáticamente
-      })
-
-      if (!response.ok) {
-        throw new Error("Error al crear la semilla")
+      // Usar Firestore en lugar de la API de Google Sheets
+      const seedData = { ...seed, usuario: usuarioDiscord };
+      const docRef = await addDoc(collection(db, "seeds"), seedData);
+      
+      if (!docRef.id) {
+        throw new Error("Error al crear la semilla");
       }
 
-      const data = await response.json()
-      onSave({ ...seed }) // No incluimos el ID porque lo genera la API
+      onSave({ ...seed }); // No incluimos el ID porque lo genera Firestore
       onClose()
     } catch (error) {
       console.error("Error al crear la semilla:", error)
