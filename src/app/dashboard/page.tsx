@@ -24,6 +24,9 @@ type Seed = {
   imagenes: string;
 };
 
+// Tipo para las semillas que se pasan al componente CreateEditSeedModal
+type SeedForModal = Omit<Seed, 'usuario'>;
+
 export default function Dashboard() {
   const { data: session } = useSession();
   const [seeds, setSeeds] = useState<Seed[]>([]);
@@ -62,15 +65,17 @@ export default function Dashboard() {
   }, [username]);
 
   // Guardar semilla en Firestore
-  const handleSaveSeed = async (seed: Seed) => {
+  const handleSaveSeed = async (seed: SeedForModal) => {
     try {
       if (!session?.user?.name) {
         console.error("Usuario no autenticado");
         return;
       }
 
+      const userName = session.user.name;
+
       const docRef = await addDoc(collection(db, "seeds"), {
-        usuario: session.user.name,
+        usuario: userName,
         tipo: seed.tipo || "",
         nombre: seed.nombre || "",
         variedad: seed.variedad || "",
@@ -85,7 +90,7 @@ export default function Dashboard() {
 
       setSeeds((prev) => [
         ...prev,
-        { ...seed, id: docRef.id },
+        { ...seed, id: docRef.id, usuario: userName },
       ]);
     } catch (error) {
       console.error("Error al crear la semilla en Firestore", error);
@@ -110,7 +115,11 @@ export default function Dashboard() {
   // Filtrar años disponibles
   const availableYears = useMemo(() => {
     const years = new Set(seeds.map((seed) => seed.agnoRecoleccion));
-    return Array.from(years).sort((a, b) => b.localeCompare(a));
+    // Convertir los años a números para que coincidan con el tipo esperado
+    return Array.from(years)
+      .filter(year => !isNaN(Number(year))) // Filtrar años no numéricos
+      .map(year => Number(year)) // Convertir a número
+      .sort((a, b) => b - a); // Ordenar de mayor a menor
   }, [seeds]);
 
   // Filtrar y ordenar semillas
@@ -137,19 +146,7 @@ export default function Dashboard() {
   if (!session) {
     return <p className="text-center text-olive-200">Por favor, inicia sesión para ver tus semillas.</p>;
   }
-  const handleImportSeeds = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("/api/get-seeds");
-      const data = await response.json();
-      await importSeedsToFirestore(data);
-      alert("Importación completada correctamente.");
-    } catch (error) {
-      console.error("Error al importar semillas:", error);
-      alert("Error al importar datos.");
-    }
-    setLoading(false);
-  };
+
   return (
     <div className="min-h-screen bg-olive-100">
       <div className="max-w-7xl mx-auto p-6">
