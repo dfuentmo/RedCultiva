@@ -14,7 +14,7 @@ import { collection, getDocs, deleteDoc, doc, query, where, updateDoc } from "fi
 // Tipo para las semillas
 export type Seed = {
   id?: string; // Añadimos id para manejar edición y eliminación
-  usuario: string;
+  usuario?: string;
   tipo: string;
   nombre: string;
   variedad: string;
@@ -24,9 +24,6 @@ export type Seed = {
   observaciones: string;
   imageUrl?: string; // URL de la imagen almacenada en Firebase Storage
 };
-
-// Tipo para las semillas que se pasan al componente CreateEditSeedModal
-type SeedForModal = Omit<Seed, 'usuario'>;
 
 export default function Dashboard() {
   const { data: session } = useSession();

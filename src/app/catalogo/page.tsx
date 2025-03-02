@@ -10,16 +10,18 @@ import { SeedImage } from "@/components/SeedImage";
 import { SeedImageUploader } from "@/components/SeedImageUploader";
 
 // Definir la interfaz para los datos de semillas
-interface Seed {
-  id: string;
+type Seed = {
+  id?: string;
+  usuario?: string;
+  tipo: string;
   nombre: string;
   variedad: string;
-  año: string;
+  nombreCientifico: string;
+  agnoRecoleccion: string;
   lugarRecoleccion: string;
-  usuario: string;
-  fechaRegistro: string;
-  imageUrl?: string; // URL de la imagen almacenada en Firebase Storage
-}
+  observaciones: string;
+  imageUrl?: string;
+};
 
 // Función para determinar el color de categoría basado en la variedad
 const getCategoryColor = (variedad: string): string => {
@@ -273,7 +275,7 @@ export default function CatalogoPage() {
                           <div className="space-y-2 mb-4">
                             <div className="flex items-center text-sm text-olive-700">
                               <Calendar className="h-4 w-4 mr-2 text-olive-500" />
-                              <span>Año: {seed.año || "Desconocido"}</span>
+                              <span>Año: {seed.agnoRecoleccion || "Desconocido"}</span>
                             </div>
                             <div className="flex items-center text-sm text-olive-700">
                               <MapPin className="h-4 w-4 mr-2 text-olive-500" />
@@ -313,7 +315,7 @@ export default function CatalogoPage() {
                             <span>{seed.lugarRecoleccion || "Origen desconocido"}</span>
                             <span className="mx-2">•</span>
                             <Calendar className="h-4 w-4 mr-1 text-olive-500" />
-                            <span>Año: {seed.año || "Desconocido"}</span>
+                            <span>Año: {seed.agnoRecoleccion || "Desconocido"}</span>
                           </div>
                         </div>
                         <div className="pr-4">
@@ -409,7 +411,7 @@ export default function CatalogoPage() {
                       <Calendar className="h-5 w-5 mr-2 text-olive-600" />
                       <h3 className="text-sm font-medium text-olive-700">Año</h3>
                     </div>
-                    <p className="text-olive-900 font-medium">{selectedSeed.año || "Desconocido"}</p>
+                    <p className="text-olive-900 font-medium">{selectedSeed.agnoRecoleccion || "Desconocido"}</p>
                   </div>
                   
                   <div className="bg-white p-4 rounded-lg border border-olive-200">
@@ -425,7 +427,7 @@ export default function CatalogoPage() {
                       <Calendar className="h-5 w-5 mr-2 text-olive-600" />
                       <h3 className="text-sm font-medium text-olive-700">Fecha de registro</h3>
                     </div>
-                    <p className="text-olive-900 font-medium">{selectedSeed.fechaRegistro || "No disponible"}</p>
+                    <p className="text-olive-900 font-medium">{selectedSeed.observaciones || "No disponible"}</p>
                   </div>
                 </div>
                 

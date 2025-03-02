@@ -12,19 +12,7 @@ import { collection, addDoc, updateDoc, doc } from "firebase/firestore"
 import { SeedImageUploader } from "@/components/SeedImageUploader"
 import { SeedImage } from "@/components/SeedImage"
 import { Sprout, Leaf, Calendar, MapPin, BookOpen, FileText } from "lucide-react"
-
-type Seed = {
-  id?: string;
-  tipo: string;
-  nombre: string;
-  variedad: string;
-  nombreCientifico: string;
-  agnoRecoleccion: string;
-  lugarRecoleccion: string;
-  observaciones: string;
-  imageUrl?: string;
-  usuario?: string;
-}
+import { Seed } from "@/app/dashboard/page"
 
 type CreateEditSeedModalProps = {
   isOpen: boolean;

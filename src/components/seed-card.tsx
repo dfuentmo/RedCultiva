@@ -4,22 +4,12 @@ import { Edit, Trash2, Sprout } from "lucide-react"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SeedImage } from "@/components/SeedImage"
+import { Seed } from "@/app/dashboard/page"
 
 type SeedCardProps = {
-  seed: {
-    id?: string;
-    usuario: string;
-    tipo: string;
-    nombre: string;
-    variedad: string;
-    nombreCientifico: string;
-    agnoRecoleccion: string;
-    lugarRecoleccion: string;
-    observaciones: string;
-    imageUrl?: string;
-  }
-  onEdit: () => void
-  onDelete: () => void
+  seed: Seed;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
 export function SeedCard({ seed, onEdit, onDelete }: SeedCardProps) {
