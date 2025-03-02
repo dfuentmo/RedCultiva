@@ -1,7 +1,12 @@
 'use client';
-import { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 
-export default function AddSeedModal({ isOpen, onClose }) {
+interface AddSeedModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function AddSeedModal({ isOpen, onClose }: AddSeedModalProps) {
   const [formData, setFormData] = useState({
     nombre: "",
     variedad: "",
@@ -10,7 +15,7 @@ export default function AddSeedModal({ isOpen, onClose }) {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -18,7 +23,7 @@ export default function AddSeedModal({ isOpen, onClose }) {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 
