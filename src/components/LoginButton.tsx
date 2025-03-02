@@ -17,11 +17,11 @@ function LoginButtonContent() {
   if (!session) {
     return (
       <button
-      className="bg-olivine-100 text-dark_moss_green-600 hover:bg-olivine-200 font-bold py-2 px-4 rounded"
-      onClick={() => signIn("discord")}
-    >
-      Iniciar sesión en Discord
-    </button>
+        className="bg-olive-800 text-olive-100 hover:bg-olive-900 transition-colors font-medium py-2 px-4 rounded-lg shadow-md"
+        onClick={() => signIn("discord")}
+      >
+        Iniciar sesión en Discord
+      </button>
     );
   }
 }

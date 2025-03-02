@@ -12,10 +12,10 @@ type FeatureCardProps = {
     icon,
     title,
     description,
-    titleColor = 'text-green-800',
-    descriptionColor = 'text-green-600',
+    titleColor = 'text-olive-900',
+    descriptionColor = 'text-olive-700',
     backgroundColor = 'bg-olive-100',
-    iconColor = 'text-green-600',
+    iconColor = 'text-olive-800',
   }: FeatureCardProps) {
     return (
       <div className={`${backgroundColor} rounded-lg shadow-md p-6 text-center`}>

@@ -1,17 +1,15 @@
 // app/layout.tsx
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import Footer from '@/components/Footer';
-import SessionProviderWrapper from "@/components/SessionProviderWrapper"; // Asegúrate de importar el wrapper
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import SessionProviderWrapper from "@/components/SessionProviderWrapper";
+import { Menu } from "@/components/Menu";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const sourceSans3 = Source_Sans_3({
   subsets: ["latin"],
+  variable: "--font-source-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -25,14 +23,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="es" className={`${sourceSans3.variable}`}>
+      <body className="min-h-screen flex flex-col bg-olive-100 text-olive-900">
         <SessionProviderWrapper>
-        {children}
+          <header className="fixed top-0 w-full z-50">
+            <Menu />
+          </header>
+          <main className="flex-grow w-full mt-20">
+            {children}
+          </main>
+          <Footer />
         </SessionProviderWrapper>
-        <Footer />
       </body>
     </html>
   );
