@@ -12,6 +12,7 @@ interface SemillaCardProps {
     observaciones: string;
     variedad: string;
   };
+  currentUser?: string;
 }
 
 const SemillaCard: React.FC<SemillaCardProps> = ({ semilla }) => {
