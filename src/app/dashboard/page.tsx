@@ -10,6 +10,7 @@ import { CreateEditSeedModal } from "@/components/create-edit-seed-modal";
 import { SearchBar } from "@/components/search-bar";
 import { db } from "@/lib/firebase"; // Conexión a Firebase Firestore
 import { collection, getDocs, deleteDoc, doc, query, where, updateDoc } from "firebase/firestore";
+import { deleteImageFromCloudinary } from "@/lib/cloudinary"; // Importar la función para eliminar imágenes
 
 // Tipo para las semillas
 export type Seed = {
@@ -109,12 +110,39 @@ export default function Dashboard() {
   // Eliminar semilla desde Firestore
   const handleDeleteSeed = async (id: string) => {
     try {
+      // Primero, obtener la semilla para acceder a su URL de imagen
+      const seedToDelete = seeds.find(seed => seed.id === id);
+      
+      if (!seedToDelete) {
+        console.error("No se encontró la semilla a eliminar");
+        return;
+      }
+      
+      if (seedToDelete.imageUrl) {
+        console.log("Intentando eliminar imagen:", seedToDelete.imageUrl);
+        // Eliminar la imagen de Cloudinary
+        const imageDeleted = await deleteImageFromCloudinary(seedToDelete.imageUrl);
+        
+        if (!imageDeleted) {
+          console.error("No se pudo eliminar la imagen de Cloudinary");
+          // Podemos continuar con la eliminación de la semilla aunque falle la eliminación de la imagen
+        } else {
+          console.log("Imagen eliminada exitosamente");
+        }
+      }
+      
+      // Luego eliminar el documento de Firestore
+      console.log("Eliminando documento de Firestore:", id);
       const seedDocRef = doc(db, "seeds", id);
       await deleteDoc(seedDocRef);
 
+      // Actualizar el estado local
       setSeeds((prev) => prev.filter((seed) => seed.id !== id));
+      
+      console.log("Semilla eliminada exitosamente");
     } catch (error) {
-      console.error("Error al eliminar la semilla desde Firestore", error);
+      console.error("Error al eliminar la semilla:", error);
+      // Aquí podrías mostrar un mensaje de error al usuario
     }
   };
 
