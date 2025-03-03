@@ -24,7 +24,6 @@ type CreateEditSeedModalProps = {
 export function CreateEditSeedModal({ isOpen, onClose, onSave, seedToEdit }: CreateEditSeedModalProps) {
   const { data: session } = useSession()
   const usuarioDiscord = session?.user?.name || ""
-  const [tempSeedId, setTempSeedId] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Asegúrate de que seed.tipo se inicialice como "Semilla"
@@ -53,7 +52,6 @@ export function CreateEditSeedModal({ isOpen, onClose, onSave, seedToEdit }: Cre
         observaciones: "",
         imageUrl: "",
       })
-      setTempSeedId("");
     }
   }, [seedToEdit, isOpen]) // Añadido isOpen para resetear cuando se abre el modal
 
@@ -68,9 +66,6 @@ export function CreateEditSeedModal({ isOpen, onClose, onSave, seedToEdit }: Cre
     // Si estamos editando una semilla existente, actualizar la URL de la imagen en Firestore
     if (seedToEdit?.id) {
       updateDoc(doc(db, "seeds", seedToEdit.id), { imageUrl });
-    } else if (tempSeedId) {
-      // Si tenemos un ID temporal (para nuevas semillas), actualizar también
-      updateDoc(doc(db, "seeds", tempSeedId), { imageUrl });
     }
   };
 
@@ -83,7 +78,6 @@ export function CreateEditSeedModal({ isOpen, onClose, onSave, seedToEdit }: Cre
         // Si estamos editando, actualizar el documento existente
         await updateDoc(doc(db, "seeds", seedToEdit.id), { ...seed });
         onSave({ ...seed, id: seedToEdit.id });
-        onClose();
       } else {
         // Si estamos creando, añadir un nuevo documento
         const seedData = { ...seed, usuario: usuarioDiscord };
@@ -93,16 +87,11 @@ export function CreateEditSeedModal({ isOpen, onClose, onSave, seedToEdit }: Cre
           throw new Error("Error al crear la semilla");
         }
         
-        // Guardar el ID temporal para poder actualizar la imagen después
-        setTempSeedId(docRef.id);
-        
         onSave({ ...seedData, id: docRef.id });
-        
-        // Solo cerramos el modal si no hay una imagen pendiente de subir
-        if (!seed.imageUrl) {
-          onClose();
-        }
       }
+      
+      // Cerramos el modal después de guardar
+      onClose();
     } catch (error) {
       console.error("Error al guardar la semilla:", error)
     } finally {
@@ -130,7 +119,6 @@ export function CreateEditSeedModal({ isOpen, onClose, onSave, seedToEdit }: Cre
           {/* Imagen de la semilla - Colocada al principio para mayor visibilidad */}
           <div className="bg-olive-100/50 p-4 rounded-lg border border-olive-200">
             <SeedImageUploader 
-              seedId={seedToEdit?.id || tempSeedId} 
               initialImageUrl={seed.imageUrl}
               onImageUploaded={handleImageUploaded}
             />

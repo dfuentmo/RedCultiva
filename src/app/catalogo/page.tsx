@@ -374,8 +374,8 @@ export default function CatalogoPage() {
         
         {/* Modal de detalles de semilla */}
         {showModal && selectedSeed && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-olive-50 rounded-2xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-olive-200">
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-olive-100 rounded-2xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-olive-200">
               <div className="relative">
                 <SeedImage 
                   imageUrl={selectedSeed.imageUrl}
@@ -388,7 +388,7 @@ export default function CatalogoPage() {
                 </div>
                 <button 
                   onClick={closeModal}
-                  className="absolute top-4 left-4 bg-white/80 backdrop-blur-sm p-2 rounded-full text-olive-600 hover:text-olive-900 shadow-md"
+                  className="absolute top-4 left-4 bg-white p-2 rounded-full text-olive-600 hover:text-olive-900 shadow-md"
                 >
                   <X size={20} />
                 </button>
@@ -398,7 +398,7 @@ export default function CatalogoPage() {
                 <h2 className="text-2xl font-bold text-olive-900 mb-6">{selectedSeed.nombre}</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div className="bg-white p-4 rounded-lg border border-olive-200">
+                  <div className="bg-olive-100/70 p-5 rounded-lg border border-olive-200">
                     <div className="flex items-center mb-2">
                       <Leaf className="h-5 w-5 mr-2 text-olive-600" />
                       <h3 className="text-sm font-medium text-olive-700">Variedad</h3>
@@ -406,7 +406,7 @@ export default function CatalogoPage() {
                     <p className="text-olive-900 font-medium">{selectedSeed.variedad || "No especificada"}</p>
                   </div>
                   
-                  <div className="bg-white p-4 rounded-lg border border-olive-200">
+                  <div className="bg-olive-100/70 p-5 rounded-lg border border-olive-200">
                     <div className="flex items-center mb-2">
                       <Calendar className="h-5 w-5 mr-2 text-olive-600" />
                       <h3 className="text-sm font-medium text-olive-700">Año</h3>
@@ -414,54 +414,31 @@ export default function CatalogoPage() {
                     <p className="text-olive-900 font-medium">{selectedSeed.agnoRecoleccion || "Desconocido"}</p>
                   </div>
                   
-                  <div className="bg-white p-4 rounded-lg border border-olive-200">
+                  <div className="bg-olive-100/70 p-5 rounded-lg border border-olive-200">
                     <div className="flex items-center mb-2">
                       <MapPin className="h-5 w-5 mr-2 text-olive-600" />
                       <h3 className="text-sm font-medium text-olive-700">Lugar de recolección</h3>
                     </div>
                     <p className="text-olive-900 font-medium">{selectedSeed.lugarRecoleccion || "No especificado"}</p>
                   </div>
-                  
-                  <div className="bg-white p-4 rounded-lg border border-olive-200">
+
+                  <div className="bg-olive-100/70 p-5 rounded-lg border border-olive-200">
                     <div className="flex items-center mb-2">
-                      <Calendar className="h-5 w-5 mr-2 text-olive-600" />
-                      <h3 className="text-sm font-medium text-olive-700">Fecha de registro</h3>
+                      <User className="h-5 w-5 mr-2 text-olive-600" />
+                      <h3 className="text-sm font-medium text-olive-700">Guardián de la semilla</h3>
                     </div>
-                    <p className="text-olive-900 font-medium">{selectedSeed.observaciones || "No disponible"}</p>
+                    <p className="text-olive-900 font-medium">{selectedSeed.usuario || "Anónimo"}</p>
                   </div>
                 </div>
                 
-                <div className="bg-olive-100/70 p-5 rounded-lg mb-6 border border-olive-200">
+                <div className="bg-olive-100/70 p-5 rounded-lg border border-olive-200">
                   <div className="flex items-center mb-2">
-                    <User className="h-5 w-5 mr-2 text-olive-600" />
-                    <h3 className="text-sm font-medium text-olive-700">Guardián de la semilla</h3>
+                    <Info className="h-5 w-5 mr-2 text-olive-600" />
+                    <h3 className="text-sm font-medium text-olive-700">Observaciones</h3>
                   </div>
-                  <p className="text-olive-900 font-medium">{selectedSeed.usuario || "Anónimo"}</p>
+                  <p className="text-olive-900 font-medium">{selectedSeed.observaciones || "No disponible"}</p>
                 </div>
-                
-                {/* Componente para subir imágenes */}
-                <SeedImageUploader 
-                  seedId={selectedSeed.id} 
-                  onImageUploaded={(imageUrl) => {
-                    // Actualizar la imagen en el estado local
-                    setSelectedSeed({...selectedSeed, imageUrl});
-                    
-                    // Actualizar la imagen en la lista de semillas
-                    setSeeds(prevSeeds => 
-                      prevSeeds.map(s => 
-                        s.id === selectedSeed.id ? {...s, imageUrl} : s
-                      )
-                    );
-                    
-                    // Actualizar también las semillas filtradas
-                    setFilteredSeeds(prevSeeds => 
-                      prevSeeds.map(s => 
-                        s.id === selectedSeed.id ? {...s, imageUrl} : s
-                      )
-                    );
-                  }}
-                />
-                
+
                 <div className="text-center mt-6">
                   <button 
                     onClick={closeModal}
