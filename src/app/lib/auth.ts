@@ -6,6 +6,13 @@ if (!process.env.DISCORD_CLIENT_ID || !process.env.DISCORD_CLIENT_SECRET) {
   throw new Error("Las variables de entorno DISCORD_CLIENT_ID o DISCORD_CLIENT_SECRET no están definidas.");
 }
 
+interface User {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  id?: string; // Agregar el ID de Discord aquí
+}
+
 export const authOptions: AuthOptions = {
   providers: [
     DiscordProvider({
@@ -22,9 +29,11 @@ export const authOptions: AuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      // Comprobamos si el token tiene el accessToken y el id
       if (typeof token.accessToken === "string") {
         session.accessToken = token.accessToken;
+      }
+      if (!session.user) {
+        session.user = { name: null, email: null, image: null, id: "" }; // Inicializar session.user si es undefined
       }
       if (token.id) {
         session.user.id = token.id;  // Pasamos el ID de Discord a la sesión
