@@ -157,6 +157,22 @@ export default function CatalogoPage() {
     document.body.style.overflow = 'auto';
   };
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    };
+
+    if (showModal) {
+        window.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showModal]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-olive-50 to-olive-100 py-16">
       <div className="container mx-auto px-4">
@@ -172,19 +188,19 @@ export default function CatalogoPage() {
 
         {/* Barra de búsqueda y filtros */}
         <div className="flex flex-col items-center mb-6">
-          <div className="flex flex-wrap gap-4 items-center bg-olive-100/80 backdrop-blur-lg p-4 rounded-lg shadow-lg border border-olive-300 max-w-5xl w-full">
+          <div className="flex flex-wrap gap-4 items-center bg-olive-100/80 text-olive-900 backdrop-blur-lg p-4 rounded-lg shadow-lg border border-olive-300  max-w-5xl w-full">
             <Input
               type="text"
               placeholder="Buscar semillas..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-grow bg-olive-200 border-olive-300 text-olive-900 placeholder:text-olive-600/70"
+              className="flex-grow bg-olive-200 border-olive-300 text-olive-900 placeholder:text-olive-900/70"
             />
             <Select value={filterVariedad} onValueChange={setFilterVariedad}>
               <SelectTrigger className="w-[180px] bg-olive-200 border-olive-300 text-olive-900">
                 <SelectValue placeholder="Variedad" />
               </SelectTrigger>
-              <SelectContent className="bg-olive-200 border-olive-300">
+              <SelectContent className="bg-olive-200 border-olive-300 text-olive-900">
                 <SelectItem value="todas">Todas las variedades</SelectItem>
                 {variedades.map(variedad => (
                   <SelectItem key={variedad} value={variedad}>{variedad}</SelectItem>
@@ -195,7 +211,7 @@ export default function CatalogoPage() {
               <SelectTrigger className="w-[180px] bg-olive-200 border-olive-300 text-olive-900">
                 <SelectValue placeholder="Lugar" />
               </SelectTrigger>
-              <SelectContent className="bg-olive-200 border-olive-300">
+              <SelectContent className="bg-olive-200 border-olive-300 text-olive-900">
                 <SelectItem value="todos">Todos los lugares</SelectItem>
                 {lugares.map(lugar => (
                   <SelectItem key={lugar} value={lugar}>{lugar}</SelectItem>
@@ -387,8 +403,8 @@ export default function CatalogoPage() {
                 <button 
                   onClick={closeModal}
                   className="absolute top-4 left-4 bg-white p-2 rounded-full text-olive-600 hover:text-olive-900 shadow-md"
+                  style={{ display: 'none' }}
                 >
-                  <X size={20} />
                 </button>
               </div>
               
