@@ -157,6 +157,22 @@ export default function CatalogoPage() {
     document.body.style.overflow = 'auto';
   };
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    };
+
+    if (showModal) {
+        window.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showModal]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-olive-50 to-olive-100 py-16">
       <div className="container mx-auto px-4">
@@ -171,57 +187,55 @@ export default function CatalogoPage() {
         </p>
 
         {/* Barra de búsqueda y filtros */}
-        <div className="bg-olive-100 bg-opacity-60 backdrop-blur-sm rounded-2xl shadow-lg border border-olive-200/30 p-6 mb-10 max-w-5xl mx-auto">
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-olive-600" size={18} />
-              <Input
-                type="text"
-                placeholder="Buscar por nombre, variedad o lugar..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-white bg-opacity-70 border-olive-300 focus:border-olive-500 focus:ring-olive-500"
-              />
-            </div>
-            
+        <div className="flex flex-col items-center mb-6">
+          <div className="flex flex-wrap gap-4 items-center bg-olive-100/80 text-olive-900 backdrop-blur-lg p-4 rounded-lg shadow-lg border border-olive-300  max-w-5xl w-full">
+            <Input
+              type="text"
+              placeholder="Buscar semillas..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="flex-grow bg-olive-200 border-olive-300 text-olive-900 placeholder:text-olive-900/70"
+            />
             <Select value={filterVariedad} onValueChange={setFilterVariedad}>
-              <SelectTrigger className="w-full md:w-48 bg-white bg-opacity-70 border-olive-300">
+              <SelectTrigger className="w-[180px] bg-olive-200 border-olive-300 text-olive-900">
                 <SelectValue placeholder="Variedad" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-olive-200 border-olive-300 text-olive-900">
                 <SelectItem value="todas">Todas las variedades</SelectItem>
                 {variedades.map(variedad => (
                   <SelectItem key={variedad} value={variedad}>{variedad}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            
             <Select value={filterLugar} onValueChange={setFilterLugar}>
-              <SelectTrigger className="w-full md:w-48 bg-white bg-opacity-70 border-olive-300">
+              <SelectTrigger className="w-[180px] bg-olive-200 border-olive-300 text-olive-900">
                 <SelectValue placeholder="Lugar" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-olive-200 border-olive-300 text-olive-900">
                 <SelectItem value="todos">Todos los lugares</SelectItem>
                 {lugares.map(lugar => (
                   <SelectItem key={lugar} value={lugar}>{lugar}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
-          
-          <div className="flex justify-between items-center">
-            <button 
-              onClick={resetFilters}
-              className="text-olive-600 hover:text-olive-800 text-sm font-medium"
+            <ToggleGroup 
+              type="single" 
+              value={viewMode} 
+              onValueChange={(value) => setViewMode(value as "grid" | "list")}
+              className="bg-olive-200 border-olive-300"
             >
-              Limpiar filtros
-            </button>
-            
-            <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as "grid" | "list")}>
-              <ToggleGroupItem value="grid" aria-label="Ver en cuadrícula">
+              <ToggleGroupItem 
+                value="grid" 
+                aria-label="Vista de cuadrícula"
+                className="text-olive-900 data-[state=on]:bg-olive-800 data-[state=on]:text-olive-100"
+              >
                 <Grid className="h-4 w-4" />
               </ToggleGroupItem>
-              <ToggleGroupItem value="list" aria-label="Ver en lista">
+              <ToggleGroupItem 
+                value="list" 
+                aria-label="Vista de lista"
+                className="text-olive-900 data-[state=on]:bg-olive-800 data-[state=on]:text-olive-100"
+              >
                 <List className="h-4 w-4" />
               </ToggleGroupItem>
             </ToggleGroup>
@@ -389,8 +403,8 @@ export default function CatalogoPage() {
                 <button 
                   onClick={closeModal}
                   className="absolute top-4 left-4 bg-white p-2 rounded-full text-olive-600 hover:text-olive-900 shadow-md"
+                  style={{ display: 'none' }}
                 >
-                  <X size={20} />
                 </button>
               </div>
               
