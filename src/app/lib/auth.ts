@@ -14,16 +14,20 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, account }) {
-      if (account) {
+    async jwt({ token, account, user }) {
+      if (account && user) {
         token.accessToken = account.access_token;
+        token.id = user.id;  // Guardar el ID de Discord en el token
       }
       return token;
     },
     async session({ session, token }) {
-      // Comprobamos si el token tiene el accessToken y lo asignamos solo si está presente
+      // Comprobamos si el token tiene el accessToken y el id
       if (typeof token.accessToken === "string") {
         session.accessToken = token.accessToken;
+      }
+      if (token.id) {
+        session.user.id = token.id;  // Pasamos el ID de Discord a la sesión
       }
       return session;
     },

@@ -1,77 +1,101 @@
 'use client';
+
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import LoginButton from "@/components/LoginButton";
-import { Sprout } from "lucide-react";
+import { Sprout, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
-
-const ADMIN_DISCORD_IDS = process.env.ADMIN_DISCORD_IDS || '';
 
 export function Menu() {
   const { data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
-  const isAdmin = session && session.user && session.user.email && ADMIN_DISCORD_IDS.split(',').includes(session.user.email);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);  // Estado para almacenar si el usuario es admin
+
+  // Comprobar si el ID de Discord está disponible y es el esperado
+  useEffect(() => {
+    if (session?.user?.id) {
+      console.log("ID de Discord:", session.user.id);  // Console log del ID
+    }
+  }, [session]);
+
+  // Comprobar si el usuario es admin cuando se abre el menú
+  useEffect(() => {
+    if (menuOpen && session?.user?.id) {
+      // Aquí realizamos la comprobación del ID del usuario
+      const isAdmin = process.env.NEXT_PUBLIC_ADMIN_DISCORD_IDS.split(',').includes(session.user.id);
+      setIsAdmin(isAdmin);  // Actualizamos el estado de isAdmin
+      console.log(isAdmin);
+    }
+  }, [menuOpen, session?.user?.id]); // Solo se ejecuta cuando se abre el modal y el ID cambia
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 0);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const closeMenu = () => setMenuOpen(false);
+
   return (
-    <nav className={`w-full py-4 shadow-lg transition-all duration-200 ${
-      isScrolled ? 'bg-olive-100/80 backdrop-blur-lg' : 'bg-olive-100/40 backdrop-blur-sm'
-    }`}>
+    <nav className={`w-full py-4 shadow-lg transition-all duration-200 ${isScrolled ? 'bg-olive-100/80 backdrop-blur-lg' : 'bg-olive-100/40 backdrop-blur-sm'}`}>
       <div className="container mx-auto flex justify-between items-center px-8">
         <Link href="/" className="flex items-center space-x-2 text-olive-900 text-xl font-bold hover:text-olive-600 transition-colors">
           <Sprout size={24} />
           <span>RedCultiva</span>
         </Link>
         <div className="flex items-center space-x-4">
-          <Link 
-            href="/catalogo" 
-            className="text-olive-900 hover:text-olive-600 font-medium transition-colors"
-          >
+          <Link href="/catalogo" className="text-olive-900 hover:text-olive-600 font-medium transition-colors">
             Catálogo de Semillas
           </Link>
-          <Link 
-            href="/como-funciona" 
-            className="text-olive-900 hover:text-olive-600 font-medium transition-colors"
-          >
+          <Link href="/como-funciona" className="text-olive-900 hover:text-olive-600 font-medium transition-colors">
             Cómo Funciona
           </Link>
           {!session ? (
             <LoginButton />
           ) : (
-            <div className="flex items-center space-x-2">
-              <Link 
-                href="/dashboard" 
-                className="bg-olive-800 text-olive-100 hover:bg-olive-900 font-medium py-2 px-4 rounded-lg shadow-md transition-colors flex items-center space-x-2"
+            <div className="relative">
+              <button 
+                className="flex items-center space-x-2 bg-olive-800 text-olive-100 py-2 px-4 rounded-lg shadow-md transition-colors hover:bg-olive-900"
+                onClick={() => setMenuOpen(!menuOpen)}
               >
-                <div className="w-8 h-8 rounded-full overflow-hidden">
-                  <img 
-                    src={session?.user?.image || "/default-avatar.png"} 
-                    alt="User Avatar" 
-                    className="w-full h-full object-cover" 
-                  />
-                </div>
+                <img src={session.user.image || "/default-avatar.png"} alt="User Avatar" className="w-8 h-8 rounded-full object-cover" />
                 <span className="text-sm">Mi cuenta</span>
-              </Link>
-              <button
-                className="bg-olive-800 text-olive-100 hover:bg-olive-900 font-medium py-2 px-4 rounded-lg shadow-md transition-colors"
-                onClick={() => signOut()}
-              >
-                Cerrar sesión
+                <ChevronDown size={18} />
               </button>
+
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-olive-800 text-olive-100 rounded-lg overflow-hidden shadow-lg">
+                  <Link 
+                    href="/dashboard" 
+                    className="block px-4 py-2 hover:bg-olive-900 transition-colors"
+                    onClick={closeMenu} // Cierra el menú cuando se hace clic
+                  >
+                    Gestionar mis semillas
+                  </Link>
+                  {isAdmin && (
+                    <Link 
+                      href="/admin"
+                      className="block px-4 py-2 hover:bg-olive-900 transition-colors"
+                      onClick={closeMenu} // Cierra el menú al hacer clic
+                    >
+                      Administración
+                    </Link>
+                  )}
+                  <button 
+                    className="w-full text-left block px-4 py-2 hover:bg-olive-900 transition-colors"
+                    onClick={() => {
+                      closeMenu();  // Cierra el menú al hacer clic
+                      signOut();    // Cierra sesión
+                    }}
+                  >
+                    Cerrar sesión
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-          {isAdmin && (
-            <Link href="/admin" className="text-olive-600 hover:text-olive-800 transition-colors">
-              Administración
-            </Link>
           )}
         </div>
       </div>
