@@ -5,9 +5,12 @@ import LoginButton from "@/components/LoginButton";
 import { Sprout } from "lucide-react";
 import { useState, useEffect } from "react";
 
+const ADMIN_DISCORD_IDS = process.env.ADMIN_DISCORD_IDS || '';
+
 export function Menu() {
   const { data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
+  const isAdmin = session && session.user && session.user.email && ADMIN_DISCORD_IDS.split(',').includes(session.user.email);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,6 +67,11 @@ export function Menu() {
                 Cerrar sesión
               </button>
             </div>
+          )}
+          {isAdmin && (
+            <Link href="/admin" className="text-olive-600 hover:text-olive-800 transition-colors">
+              Administración
+            </Link>
           )}
         </div>
       </div>

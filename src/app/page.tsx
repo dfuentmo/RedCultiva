@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { db } from "@/lib/firebase"; // Importa la configuración de Firebase
 import { collection, getDocs } from "firebase/firestore";
 import { SproutIcon, UsersIcon, GlobeIcon } from "lucide-react";
+import Globe from '../components/Globe';
 
 // Tipo para los datos de semillas
 type Seed = {
@@ -88,8 +89,8 @@ export default function Home() {
         {/* Features Section */}
         <FeaturesSection />
         
-        {/* Stats Section */}
-        <section className="py-20 bg-gradient-to-b from-olive-50 to-olive-100 relative overflow-hidden">
+        {/* Estadísticas Section */}
+        <section className="pt-16 pb-5 bg-gradient-to-b from-olive-50 to-olive-100 relative overflow-hidden">
           {/* Eliminamos los elementos decorativos de fondo */}
           {/* <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10">
             <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-olive-600 blur-3xl"></div>
@@ -117,7 +118,7 @@ export default function Home() {
                 color="from-olive-500 to-olive-700"
               />
               <StatCard 
-                title="Países Participantes" 
+                title="Lugares de intercambio" 
                 value={stats.paisesParticipantes.toLocaleString()} 
                 icon={<GlobeIcon className="w-8 h-8" />}
                 color="from-olive-300 to-olive-500"
@@ -125,6 +126,51 @@ export default function Home() {
             </div>
           </div>
         </section>
+{/* Juntos somos RedCultiva Section */}
+{/* Juntos somos RedCultiva Section */}
+<section className="bg-gradient-to-b from-olive-50 to-olive-100 relative overflow-hidden">
+  <div className="container mx-auto px-4 relative z-10">
+    <h2 className="text-4xl font-bold text-center text-olive-900 mb-16 relative">
+      <span className="relative z-10">Juntos somos RedCultiva</span>
+      <span className="absolute w-24 h-1 bg-olive-500 bottom-0 left-1/2 transform -translate-x-1/2 -mb-4"></span>
+    </h2>
+    
+    <div className="flex flex-col lg:flex-row justify-between items-center max-w-5xl mx-auto">
+      {/* Texto explicativo */}
+      <div className="w-full lg:w-1/2 pr-4">
+        <h3 className="text-2xl font-semibold text-olive-900 mb-4">Únete a nuestro proyecto internacional</h3>
+        
+        <p className="text-olive-700 text-lg mb-4">
+          <strong>RedCultiva es más que un banco de semillas.</strong>  
+          Es una comunidad de guardianes que protegen, intercambian y cultivan biodiversidad.
+        </p>
+
+        <p className="text-olive-700 text-lg mb-4">
+          📍 <strong>Cada punto en el mapa</strong> representa a alguien comprometido con la conservación de variedades únicas, asegurando que no se pierdan con el tiempo.
+        </p>
+
+        <h4 className="text-xl font-semibold text-olive-900 mb-2">¿Cómo puedes participar?</h4>
+        <div className="text-olive-700 text-lg mb-4">
+          <p>✅ Comparte semillas.</p>
+          <p>✅ Intercambia variedades locales.</p>
+          <p>✅ Aporta nuevas especies a la red.</p>
+        </div>
+
+        <p className="text-olive-700 text-lg font-semibold">
+          🌱 Cuantos más seamos, mayor será nuestro impacto.  
+          Súmate y cultiva el cambio con nosotros. ¡Juntos hacemos crecer la biodiversidad!
+        </p>
+      </div>
+
+      {/* Globo interactivo */}
+      <div className="w-full lg:w-1/2 flex justify-center mt-8 lg:mt-0">
+        <Globe />
+      </div>
+    </div>
+  </div>
+</section>
+
+
       </main>
     </div>
   );
