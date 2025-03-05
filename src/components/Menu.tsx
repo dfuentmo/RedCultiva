@@ -6,27 +6,38 @@ import LoginButton from "@/components/LoginButton";
 import { Sprout, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 
+interface User {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  id?: string; // Agregar el ID de Discord aquí
+}
+
 export function Menu() {
   const { data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);  // Estado para almacenar si el usuario es admin
+  const user = session?.user as User || null; // Asegurarse de que el tipo de usuario incluya el ID
 
   // Comprobar si el ID de Discord está disponible y es el esperado
   useEffect(() => {
-    if (session?.user?.id) {
-      console.log("ID de Discord:", session.user.id);  // Console log del ID
+    if (user) {
+      if (user.id) {
+        console.log("ID de Discord:", user.id);
+      }
     }
-  }, [session]);
+  }, [user]);
 
   // Comprobar si el usuario es admin cuando se abre el menú
   useEffect(() => {
-    if (menuOpen && session?.user?.id) {
-      // Aquí realizamos la comprobación del ID del usuario
-      const isAdmin = process?.env?.NEXT_PUBLIC_ADMIN_DISCORD_IDS?.split(',').includes(session.user.id);
-      setIsAdmin(isAdmin);  // Actualizamos el estado de isAdmin
+    if (menuOpen && user) {
+      const adminIds = process.env.NEXT_PUBLIC_ADMIN_DISCORD_IDS || ''; // Asegurarse de que no sea undefined
+      const isAdmin = user?.id ? adminIds.split(',').includes(user.id) : false;
+      setIsAdmin(isAdmin);
+      console.log(isAdmin);
     }
-  }, [menuOpen, session?.user?.id]); // Solo se ejecuta cuando se abre el modal y el ID cambia
+  }, [menuOpen, user]); // Solo se ejecuta cuando se abre el modal y el ID cambia
 
   useEffect(() => {
     const handleScroll = () => {
