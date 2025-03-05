@@ -1,39 +1,29 @@
-import { AuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
-import { JWT } from "next-auth/jwt"; // Importar tipo JWT para tipado
+import { NextAuthOptions } from "next-auth";
 
-if (!process.env.DISCORD_CLIENT_ID || !process.env.DISCORD_CLIENT_SECRET) {
-  throw new Error("Las variables de entorno DISCORD_CLIENT_ID o DISCORD_CLIENT_SECRET no están definidas.");
-}
-export const authOptions: AuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET,
+      clientId: process.env.DISCORD_CLIENT_ID!,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
     }),
   ],
   callbacks: {
-    async jwt({ token, account, user }) {
-      if (account && user) {
-        token.accessToken = account.access_token;
-        token.id = user.id;  // Guardar el ID de Discord en el token
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id; // Guardamos el ID de Discord en el token
       }
       return token;
     },
     async session({ session, token }) {
-      if (typeof token.accessToken === "string") {
-        session.accessToken = token.accessToken;
-      }
       if (session.user) {
-        if (token.id) {
-          session.user.id = token.id;  // Pasamos el ID de Discord a la sesión
-        } else {
-          session.user.id = ""; // Asegurarse de que el ID sea una cadena
-        }
+        session.user.id = typeof token.id === "string" ? token.id : ""; // Garantizar string
       }
-
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
 };
+
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
