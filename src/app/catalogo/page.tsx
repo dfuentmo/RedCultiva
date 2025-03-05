@@ -388,7 +388,7 @@ export default function CatalogoPage() {
         
         {/* Modal de detalles de semilla */}
         {showModal && selectedSeed && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={closeModal}>
             <div className="bg-olive-100 rounded-2xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-olive-200">
               <div className="relative">
                 <SeedImage 
