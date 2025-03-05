@@ -23,9 +23,8 @@ export function Menu() {
   useEffect(() => {
     if (menuOpen && session?.user?.id) {
       // Aquí realizamos la comprobación del ID del usuario
-      const isAdmin = process.env.NEXT_PUBLIC_ADMIN_DISCORD_IDS.split(',').includes(session.user.id);
+      const isAdmin = process?.env?.NEXT_PUBLIC_ADMIN_DISCORD_IDS?.split(',').includes(session.user.id);
       setIsAdmin(isAdmin);  // Actualizamos el estado de isAdmin
-      console.log(isAdmin);
     }
   }, [menuOpen, session?.user?.id]); // Solo se ejecuta cuando se abre el modal y el ID cambia
 
@@ -61,7 +60,7 @@ export function Menu() {
                 className="flex items-center space-x-2 bg-olive-800 text-olive-100 py-2 px-4 rounded-lg shadow-md transition-colors hover:bg-olive-900"
                 onClick={() => setMenuOpen(!menuOpen)}
               >
-                <img src={session.user.image || "/default-avatar.png"} alt="User Avatar" className="w-8 h-8 rounded-full object-cover" />
+                <img src={session?.user?.image || "/default-avatar.png"} alt="User Avatar" className="w-8 h-8 rounded-full object-cover" />
                 <span className="text-sm">Mi cuenta</span>
                 <ChevronDown size={18} />
               </button>
