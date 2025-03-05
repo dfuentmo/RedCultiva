@@ -24,7 +24,7 @@ export const authOptions: AuthOptions = {
       if (typeof token.accessToken === "string") {
         session.accessToken = token.accessToken;
       }
-      if (!session.user) {
+      if (session.user) {
         if (token.id) {
           session.user.id = token.id;  // Pasamos el ID de Discord a la sesión
         } else {
