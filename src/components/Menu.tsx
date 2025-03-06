@@ -87,7 +87,7 @@ export function Menu() {
                   </Link>
                   {isAdmin && (
                     <Link 
-                      href="/admin"
+                      href="/control"
                       className="block px-4 py-2 hover:bg-olive-900 transition-colors"
                       onClick={closeMenu} // Cierra el menú al hacer clic
                     >
