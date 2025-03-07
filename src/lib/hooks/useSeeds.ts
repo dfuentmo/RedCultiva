@@ -30,7 +30,7 @@ export function useSeeds() {
     queryKey: ["seeds"],
     queryFn: fetchSeeds,
     staleTime: 1000 * 60 * 5, // 🕒 Datos válidos por 5 minutos
-    cacheTime: 1000 * 60 * 10, // 💾 Se mantienen en caché 10 minutos
+    gcTime: 1000 * 60 * 10, // 💾 Se mantienen en caché 10 minutos (cacheTime fue renombrado a gcTime en v5 de TanStack Query)
     refetchOnWindowFocus: false, // 🚀 No recarga al cambiar de pestaña
   });
 }
