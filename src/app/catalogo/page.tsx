@@ -1,11 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import { db } from "@/lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Grid, List, Search, ChevronLeft, ChevronRight, X, Calendar, MapPin, Leaf, User, Info, Sprout } from "lucide-react";
+import { Grid, List, Search, ChevronLeft, ChevronRight, X, Calendar, MapPin, Leaf, User, Info, Sprout, RefreshCw } from "lucide-react";
 import { SeedImage } from "@/components/SeedImage";
 import { SeedImageUploader } from "@/components/SeedImageUploader";
 
@@ -69,36 +69,47 @@ export default function CatalogoPage() {
   const [selectedSeed, setSelectedSeed] = useState<Seed | null>(null);
   const [showModal, setShowModal] = useState(false);
   
+  // Estado para controlar cuándo se deben obtener los datos
+  const [shouldRefresh, setShouldRefresh] = useState(true);
+  
   // Obtener listas únicas para los filtros
   const variedades = [...new Set(seeds.map(seed => seed.variedad))].filter(Boolean).sort();
   const lugares = [...new Set(seeds.map(seed => seed.lugarRecoleccion))].filter(Boolean).sort();
 
   useEffect(() => {
+    if (!shouldRefresh) return;
+    
     const fetchSeeds = async () => {
+      setLoading(true);
       try {
-        const seedsCollection = collection(db, "seeds");
-        const seedsSnapshot = await getDocs(seedsCollection);
-        
+        // Obtener todas las semillas directamente
+        const seedsSnapshot = await getDocs(collection(db, "seeds"));
         const seedsList = seedsSnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
         })) as Seed[];
         
-        // Filtrar las semillas aprobadas
+        // Filtrar semillas aprobadas
         const approvedSeeds = seedsList.filter(seed => seed.estado === "aprobada");
         
         setSeeds(approvedSeeds);
         setFilteredSeeds(approvedSeeds);
         setLoading(false);
+        setShouldRefresh(false); // Desactivar flag de actualización
       } catch (error) {
         console.error("Error al obtener las semillas:", error);
         setLoading(false);
+        setShouldRefresh(false);
       }
     };
-  
+
     fetchSeeds();
-  }, []);
-  
+  }, [shouldRefresh]); // Solo depende de shouldRefresh
+
+  // Función simplificada para actualización manual
+  const refreshSeeds = () => {
+    setShouldRefresh(true);
+  };
 
   // Filtrar semillas cuando cambian los criterios de búsqueda
   useEffect(() => {
@@ -193,7 +204,7 @@ export default function CatalogoPage() {
 
         {/* Barra de búsqueda y filtros */}
         <div className="flex flex-col items-center mb-6">
-          <div className="flex flex-wrap gap-4 items-center bg-olive-100/80 text-olive-900 backdrop-blur-lg p-4 rounded-lg shadow-lg border border-olive-300  max-w-5xl w-full">
+          <div className="flex flex-wrap gap-4 items-center bg-olive-100/80 text-olive-900 backdrop-blur-lg p-4 rounded-lg shadow-lg border border-olive-300 max-w-5xl w-full">
             <Input
               type="text"
               placeholder="Buscar semillas..."
@@ -202,10 +213,10 @@ export default function CatalogoPage() {
               className="flex-grow bg-olive-200 border-olive-300 text-olive-900 placeholder:text-olive-900/70"
             />
             <Select value={filterVariedad} onValueChange={setFilterVariedad}>
-              <SelectTrigger className="w-[180px] bg-olive-200 border-olive-300 text-olive-900">
+              <SelectTrigger className="w-[180px] bg-olive-200 border-olive-300 text-olive-600">
                 <SelectValue placeholder="Variedad" />
               </SelectTrigger>
-              <SelectContent className="bg-olive-200 border-olive-300 text-olive-900">
+              <SelectContent className="bg-olive-200 border-olive-300">
                 <SelectItem value="todas">Todas las variedades</SelectItem>
                 {variedades.map(variedad => (
                   <SelectItem key={variedad} value={variedad}>{variedad}</SelectItem>
@@ -213,16 +224,17 @@ export default function CatalogoPage() {
               </SelectContent>
             </Select>
             <Select value={filterLugar} onValueChange={setFilterLugar}>
-              <SelectTrigger className="w-[180px] bg-olive-200 border-olive-300 text-olive-900">
+              <SelectTrigger className="w-[180px] bg-olive-200 border-olive-300 text-olive-600">
                 <SelectValue placeholder="Lugar" />
               </SelectTrigger>
-              <SelectContent className="bg-olive-200 border-olive-300 text-olive-900">
+              <SelectContent className="bg-olive-200 border-olive-300">
                 <SelectItem value="todos">Todos los lugares</SelectItem>
                 {lugares.map(lugar => (
                   <SelectItem key={lugar} value={lugar}>{lugar}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
+
             <ToggleGroup 
               type="single" 
               value={viewMode} 

@@ -36,7 +36,7 @@ export function CreateEditSeedModal({ isOpen, onClose, onSave, seedToEdit }: Cre
     lugarRecoleccion: "",
     observaciones: "",
     imageUrl: "",
-    estado: "Pendiente", // Estado por defecto "Pendiente"
+    estado: "pendiente", // Estado por defecto "Pendiente"
   });
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export function CreateEditSeedModal({ isOpen, onClose, onSave, seedToEdit }: Cre
         lugarRecoleccion: "",
         observaciones: "",
         imageUrl: "",
-        estado: "Pendiente", // Estado por defecto "Pendiente"
+        estado: "pendiente", // Estado por defecto "Pendiente"
       })
     }
   }, [seedToEdit, isOpen]) // Añadido isOpen para resetear cuando se abre el modal
