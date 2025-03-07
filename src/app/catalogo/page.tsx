@@ -21,6 +21,7 @@ type Seed = {
   lugarRecoleccion: string;
   observaciones: string;
   imageUrl?: string;
+  estado: string;
 };
 
 // Función para determinar el color de categoría basado en la variedad
@@ -83,17 +84,21 @@ export default function CatalogoPage() {
           ...doc.data(),
         })) as Seed[];
         
-        setSeeds(seedsList);
-        setFilteredSeeds(seedsList);
+        // Filtrar las semillas aprobadas
+        const approvedSeeds = seedsList.filter(seed => seed.estado === "aprobada");
+        
+        setSeeds(approvedSeeds);
+        setFilteredSeeds(approvedSeeds);
         setLoading(false);
       } catch (error) {
         console.error("Error al obtener las semillas:", error);
         setLoading(false);
       }
     };
-
+  
     fetchSeeds();
   }, []);
+  
 
   // Filtrar semillas cuando cambian los criterios de búsqueda
   useEffect(() => {

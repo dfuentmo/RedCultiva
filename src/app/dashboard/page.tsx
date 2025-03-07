@@ -23,7 +23,9 @@ export type Seed = {
   agnoRecoleccion: string;
   lugarRecoleccion: string;
   observaciones: string;
-  imageUrl?: string; // URL de la imagen almacenada en Firebase Storage
+  imageUrl?: string; 
+  estado: string;
+  // URL de la imagen almacenada en Firebase Storage
 };
 
 export default function Dashboard() {
@@ -85,6 +87,7 @@ export default function Dashboard() {
           lugarRecoleccion: seed.lugarRecoleccion || "",
           observaciones: seed.observaciones || "",
           imageUrl: seed.imageUrl || "",
+          estado: seed.estado || "",
         });
 
         // Actualizar el estado local

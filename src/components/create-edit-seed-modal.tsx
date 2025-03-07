@@ -26,7 +26,7 @@ export function CreateEditSeedModal({ isOpen, onClose, onSave, seedToEdit }: Cre
   const usuarioDiscord = session?.user?.name || ""
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Asegúrate de que seed.tipo se inicialice como "Semilla"
+  // Asegúrate de que seed.estado se inicialice como "Pendiente"
   const [seed, setSeed] = useState<Seed>({
     tipo: "Semilla", // Semilla estará marcada por defecto
     nombre: "",
@@ -36,6 +36,7 @@ export function CreateEditSeedModal({ isOpen, onClose, onSave, seedToEdit }: Cre
     lugarRecoleccion: "",
     observaciones: "",
     imageUrl: "",
+    estado: "Pendiente", // Estado por defecto "Pendiente"
   });
 
   useEffect(() => {
@@ -51,6 +52,7 @@ export function CreateEditSeedModal({ isOpen, onClose, onSave, seedToEdit }: Cre
         lugarRecoleccion: "",
         observaciones: "",
         imageUrl: "",
+        estado: "Pendiente", // Estado por defecto "Pendiente"
       })
     }
   }, [seedToEdit, isOpen]) // Añadido isOpen para resetear cuando se abre el modal
@@ -243,36 +245,26 @@ export function CreateEditSeedModal({ isOpen, onClose, onSave, seedToEdit }: Cre
               name="observaciones" 
               value={seed.observaciones} 
               onChange={handleChange} 
-              className="border-olive-300 focus:border-olive-500 focus:ring-olive-500 min-h-[100px] bg-white"
-              placeholder="Añade cualquier información adicional sobre la semilla..."
+              className="border-olive-300 focus:border-olive-500 focus:ring-olive-500 bg-white"
+              placeholder="Escribe cualquier detalle extra"
             />
           </fieldset>
 
-          <div className="flex justify-end space-x-3 pt-2 border-t border-olive-200">
+          <div className="flex justify-between mt-4">
             <Button 
               type="button" 
+              onClick={onClose} 
               variant="outline" 
-              onClick={onClose}
               disabled={isSubmitting}
-              className="border-olive-300 text-olive-700 hover:bg-olive-100 hover:text-olive-800"
-            >
+              className="text-olive-700 border-olive-300 hover:bg-olive-100">
               Cancelar
             </Button>
+
             <Button 
               type="submit" 
-              className="bg-olive-700 hover:bg-olive-800 text-white"
               disabled={isSubmitting}
-            >
-              {isSubmitting ? 
-                <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Guardando...
-                </span> : 
-                "Guardar"
-              }
+              className="text-white bg-olive-600 hover:bg-olive-700">
+              {isSubmitting ? "Guardando..." : "Guardar Semilla"}
             </Button>
           </div>
         </form>

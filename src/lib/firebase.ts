@@ -1,6 +1,5 @@
-// lib/firebase.ts
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { initializeFirestore, persistentLocalCache } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 // Configuración de Firebase usando las variables de entorno
@@ -16,8 +15,10 @@ const firebaseConfig = {
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 
-// Obtener Firestore
-const db = getFirestore(app);
+// 🔥 Activar caché local en Firestore para reducir lecturas
+const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({ cacheSizeBytes: 50 * 1024 * 1024 }), // 50MB de caché
+});
 
 // Obtener Storage
 const storage = getStorage(app);
